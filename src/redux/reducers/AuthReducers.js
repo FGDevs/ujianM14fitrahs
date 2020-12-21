@@ -1,5 +1,6 @@
 const INITIAL_STATE={
     username:'',
+    picture :'',
     isLogin:false,
     isLoading:false,
     data:[]

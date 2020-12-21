@@ -3,41 +3,55 @@ import React, { useEffect, useState } from 'react';
 // import Axios from 'axios';
 import { useSelector } from 'react-redux';
 import {
-    View,
-    Text,
-    Image
+    TouchableOpacity,
+    Image,
+    View
 } from 'react-native'
 
 
-export default ({navigation,route}) => {
-    const Auth = useSelector(state => state.Auth.data)
-    const [restaurants,setRestaurants] = useState([])
-    console.log(Auth[0]);
+export default ({navigation}) => {
+    const data = useSelector(state => state.Auth.data)
+    const [cat,setCats] = useState([])
+    
 
-    useEffect(() => {
-        setRestaurants(Auth);
-    },[]);
+    useEffect(() => {   
+        setCats(data);
+    });
 
-    console.log(restaurants[0]);
-
-
+    console.log("cat",cat)
     const renderData = () => {
-        return restaurants.map((val,index)=>{
+        return cat.map((val,index)=>{
             return(
-                <View key={index}>
-                    <Text>Nama Toko: {val.restaurant.name}</Text>
-                    <Text>Rating: {val.restaurant.user_rating.aggregate_rating}</Text>
-                    <Text>Foto : {val.restaurant.featured_image}</Text>
-                </View>
+                <TouchableOpacity key           = {index}
+                                  activeOpacity = {.8}
+                                  onPress       = {()=>navigation.navigate('Detail', { image: val.url })}
+                                  style         = {{
+                                      flex:0.5,
+                                      width:"100%"
+                                  }}
+                >
+                    <Image source={{uri: val.url}}
+                           style={{
+                               position     : 'relative',
+                               width        : 100,
+                               height       : 100,
+                               borderWidth  : 2
+                           }}
+                    />
+                </TouchableOpacity>
             );
         });
     };
 
     return (
-        <View>
-            <Text>
-                Ini adalah {route.name}
-            </Text>
+        <View style={{
+                flexDirection   : 'row',
+                flexWrap        : 'wrap',
+                width           : '100%',
+                flex            : 1,
+                borderWidth     : 2
+              }}
+        >
             {renderData()}
         </View>
     )

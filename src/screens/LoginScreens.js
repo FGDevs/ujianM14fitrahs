@@ -1,87 +1,116 @@
 import React, { useState } from 'react';
-import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    mainColor,
-    secColor,
-    thirdColor
-} from '../theme';
 import {
     StyleSheet,
     StatusBar,
-    View
+    View,
+    TouchableOpacity
 } from 'react-native';
 import {
-    Button,
     Text
 } from 'react-native-elements';
 import { Icon, Input } from 'native-base';
 
 const Styles=StyleSheet.create({
     justCenter:{
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center'
+        // justifyContent      : 'space-evenly',
+        // alignItems          : 'center'
     },
     mainPageCtr:{
-        paddingHorizontal:20
+        paddingHorizontal   : 20
     },
     mainTitleCtr:{
-        fontSize:30,
-        fontWeight:'bold',
-        color:mainColor
+        fontSize            : 30,
+        fontWeight          : 'bold',
+        color               : '#3DDC84',
+        borderWidth             :2
     },
     logoCtr:{
-        color:mainColor,
-        fontSize:40
+        color               : '#3DDC84',
+        fontSize            : 200
     },
     inputCtr:{
-        paddingHorizontal:10,
-        fontSize:15
+        padding             : 15,
+        fontSize            : 15,
+        textAlign           :'center',
+        color               : '#3DDC84',
+        margin              : 0,
+        borderWidth         : 2,
+        width               : '100%',
+        height              : 30
     }
 });
 
 export default () => {
     const dispatch = useDispatch();
-    const Auth = useSelector(state => state.Auth)
+
     const {
         justCenter,
         mainPageCtr,
-        mainTitleCtr,
         logoCtr,
         inputCtr,
     } = Styles;
 
-    const [username,setUsername] = useState('')
+    const [username,setUsername] = useState('');
 
-    const onEnterPress = () => {
-        // console.log(username)
-    }
+    const onEnterPress = async () => {
+        if(username){
+            try {
+                dispatch({type:'LOADING'})
+                AsyncStorage.setItem('user',username)
+                .then(()=>{
+                    dispatch({type:'LOGIN',payload:{
+                        username
+                    }});
+                }).catch((error)=>{
+                    console.log("async",error);
+                });
+            }catch(error){
+                console.log("onTryLogin",error)
+            }
+        }
+    };
 
     return (
-        <View style={[justCenter,mainPageCtr]}>
-            <StatusBar backgroundColor={mainColor}/>
-            <View style={justCenter}>
-                <Text style={mainTitleCtr}>
-                    TomatoApp
-                </Text>
+        <View style={{...justCenter,...mainPageCtr,height:'100%',borderWidth:2}}>
+            <StatusBar backgroundColor={'#3DDC84'}/>
+            <View style={{...justCenter,borderWidth:2}}>
                 <Icon type  = 'Ionicons'
-                      name  = 'fast-food'
+                      name  = 'logo-android'
                       style = {logoCtr}
                 />
             </View>
             <Input 
-                placeholder  = 'Masukkan Nama'
-                leftIcon     = {{name:'user', type:'feather', color:mainColor}}
-                value        = {username}
-                onChangeText = {(text)=>setUsername(text)}
-                style        = {inputCtr}
+                placeholder         = 'Masukkan Nama'
+                placeholderTextColor= '#3DDC84'
+                value               = {username}
+                onChangeText        = {(text) => setUsername(text)}
+                style               = {inputCtr}
+                leftIcon            = 
+                    {{
+                        name:'user',
+                        type:'feather',
+                        color:'#3DDC84'
+                    }}
             /> 
-            <Button 
-                title       ="Enter"
-                onPress     ={()=>onEnterPress()}
-                loading     ={Auth.isLoading}
-            />
+            <TouchableOpacity activeOpacity = {.2}
+                              style         = 
+                              {{
+                                backgroundColor:'#3DDC84',
+                                marginTop:10,
+                                paddingVertical:5,
+                                paddingHorizontal:15,
+                                borderRadius:3,
+                                height:50,
+                                borderWidth:2
+                              }}
+                              onPress={onEnterPress}         
+            >
+                  <Text style={{textAlign:'center'}}>
+                    Login
+                  </Text>
+            </TouchableOpacity>
         </View>
     );
 };

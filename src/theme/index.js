@@ -1,3 +1,5 @@
-export const mainColor="tomato";
-export const secColor="gray";
-export const thirdColor="lightgray";
+export const Colors = {
+    primary  : "tomato",
+    secondary: "gray",
+    tertiary : "lightgray"
+};
